@@ -1,0 +1,162 @@
+Criação do docker network:
+docker network create mongoCluster
+
+Iniciando as instâncias (nós):
+docker run -d --rm -p 27017:27017 --name mongo10 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo10
+
+docker run -d --rm -p 27018:27017 --name mongo20 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo20
+
+docker run -d --rm -p 27019:27017 --name mongo30 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo30
+
+docker run -d --rm -p 27020:27017 --name mongo40 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo40
+
+Criação do conjunto de réplica:
+Usando a interface do docker para criação.
+
+docker exec -it mongo10 mongosh
+
+Salvar o endereço do Connection To:
+No meu caso:
+
+mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
+
+
+Verifica se o container está conectado e executando:
+db.runCommand ({hello:1})
+
+Configura os membros do conjunto de réplicas e ativa o conjunto:
+rs.initiate ({ _id: "myReplicaSet", members:[{_id:0, host: "mongo10"}, {_id:1, host: "mongo20"}, {_id:3, host: "mongo30"}, {_id:4, host: "mongo40"}]})
+
+Sair do container shell:
+exit
+
+Verifica o status (é possivel verificar o status e ver quem está como o primário):
+docker exec -it mongo10 mongosh --eval "rs.status()"
+
+No mongoDBcompass, adicione uma conexão com o endereço anteriormente salvo.
+Ao abrir o terminal, verifique se está iniciado o replySet, no meu caso o nome do replicaSet é myReplicaSet, portando deve estar:
+
+
+Necessário aparecer no Compass:
+myReplicaSet [direct: primary] test>
+
+
+Verifica em que nó você está conectado:
+rs.isMaster().primary
+
+No MongoDB
+Comando para iserção de dados e leitura dos dados:
+
+use ClusterMongo
+
+db.cliente.insertOne({codigo:1, nome: "Marcos"});
+
+db.cliente.insertOne({codigo:2, nome: "Gabriel"});
+
+db.cliente.insertOne({codigo:3, nome: "Eric"});
+
+db.cliente.insertOne({codigo:4, nome: "Ana"});
+
+db.cliente.insertOne({codigo:5, nome: "Juliana"});
+
+db.cliente.find()
+
+No docker
+
+Parando o nó secundário:
+docker stop mongo40
+
+Verificando se o nó foi derrubado:
+docker exec -it mongo10 mongosh --eval "rs.status()"
+
+No compass:
+db.cliente.insertOne({codigo:8, nome: "João"});
+
+
+
+No Docker:
+Restabelecendo o nó:
+docker run -d --rm -p 27020:27017 --name mongo40 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo40
+
+docker exec -it mongo10 mongosh --eval "rs.status()"
+
+No docker, para parar um nó, no meu caso o primário:
+docker stop mongo10
+
+
+Para verificar o cluster e também você descobre qual nó virou o primary
+docker exec -it mongo20 mongosh --eval "rs.status()"
+
+No compass:
+db.cliente.insertOne({codigo:6, nome: "José"});
+Após a tentativa de inserção de dados, haverá um erro, pois o primário mudou para outro nó.
+
+Faça uma nova conexão:
+
+mongodb://127.0.0.1:27019/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
+
+
+Faça nova leitura e inserção de dados:
+use ClusterMongo
+
+db.cliente.findOne()
+
+db.cliente.insertOne({codigo:7, nome: "Matheus"});
+
+No Docker:
+Restabelecendo o nó do cluster no docker
+docker run -d --rm -p 27017:27017 --name mongo10 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo10
+
+Verifica a volta do nó:
+docker exec -it mongo20 mongosh --eval "rs.status()"
+
+
+Fazendo o backup:
+
+No docker:
+docker exec -it mongo40 bash
+
+Pegar as informações do Sistema Operacional
+cat /etc/os-release
+
+exit
+
+Download do MongoDB Command Line
+Fazer o download do arquivo referente ao Sitema Operacional:
+
+ https://www.mongodb.com/try/download/database-tools
+
+docker cp "C:\CommandLine\mongodb-database-tools-ubuntu2204-x86_64-100.11.0.deb" mongo30:/tmp
+
+docker container exec -u 0 -it mongo30 bash
+
+acessar a pasta tmp:
+cd tmp
+
+Verificar arquivos:
+ls -l
+
+Instalação da ferramenta:
+dpkg -i mongodb-database-tools-ubuntu2204-x86_64-100.11.0.deb
+
+sair da pasta tmp
+cd ..
+
+Fazer o backup full:
+mongodump
+
+acessar a pasta dump
+cd dump
+
+verificar arquivos:
+ls -l
+
+Delete o banco de dados:
+ClusterMongo
+
+cd ..
+
+No docker:
+mongorestore --nsInclude=ClusterMongo.* dump/
+
+No mongo verifique que o banco de dados ClusterMongo foi restaurado.
