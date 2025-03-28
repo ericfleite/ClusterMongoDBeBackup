@@ -1,3 +1,5 @@
+
+
 Criação do docker network:
 docker network create mongoCluster
 
@@ -15,7 +17,7 @@ Usando a interface do docker para criação.
 
 docker exec -it mongo10 mongosh
 
-Salvar o endereço do Connection To:
+Salvar o endereço do Connecting To:
 No meu caso:
 
 mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
@@ -36,8 +38,7 @@ docker exec -it mongo10 mongosh --eval "rs.status()"
 No mongoDBcompass, adicione uma conexão com o endereço anteriormente salvo.
 Ao abrir o terminal, verifique se está iniciado o replySet, no meu caso o nome do replicaSet é myReplicaSet, portando deve estar:
 
-
-Necessário aparecer no Compass:
+Necessário que o terminal esteja da seguinte forma:
 myReplicaSet [direct: primary] test>
 
 
@@ -59,9 +60,9 @@ db.cliente.insertOne({codigo:4, nome: "Ana"});
 
 db.cliente.insertOne({codigo:5, nome: "Juliana"});
 
-db.cliente.find()
 
-No docker
+Verifique se os dados foram inseridos:
+db.cliente.find()
 
 Parando o nó secundário:
 docker stop mongo40
@@ -69,25 +70,22 @@ docker stop mongo40
 Verificando se o nó foi derrubado:
 docker exec -it mongo10 mongosh --eval "rs.status()"
 
-No compass:
 db.cliente.insertOne({codigo:8, nome: "João"});
 
 
-
-No Docker:
 Restabelecendo o nó:
 docker run -d --rm -p 27020:27017 --name mongo40 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo40
 
 docker exec -it mongo10 mongosh --eval "rs.status()"
 
-No docker, para parar um nó, no meu caso o primário:
+No docker, para parar um nó primário (no meu caso):
 docker stop mongo10
 
 
 Para verificar o cluster e também você descobre qual nó virou o primary
 docker exec -it mongo20 mongosh --eval "rs.status()"
 
-No compass:
+No mongoDBcompass
 db.cliente.insertOne({codigo:6, nome: "José"});
 Após a tentativa de inserção de dados, haverá um erro, pois o primário mudou para outro nó.
 
@@ -103,7 +101,7 @@ db.cliente.findOne()
 
 db.cliente.insertOne({codigo:7, nome: "Matheus"});
 
-No Docker:
+
 Restabelecendo o nó do cluster no docker
 docker run -d --rm -p 27017:27017 --name mongo10 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo10
 
@@ -113,8 +111,7 @@ docker exec -it mongo20 mongosh --eval "rs.status()"
 
 Fazendo o backup:
 
-No docker:
-docker exec -it mongo40 bash
+docker exec -it mongo30 bash
 
 Pegar as informações do Sistema Operacional
 cat /etc/os-release
@@ -151,12 +148,9 @@ cd dump
 verificar arquivos:
 ls -l
 
-Delete o banco de dados:
-ClusterMongo
+delete o banco ClusterMongo
 
 cd ..
 
-No docker:
-mongorestore --nsInclude=ClusterMongo.* dump/
 
-No mongo verifique que o banco de dados ClusterMongo foi restaurado.
+mongorestore --nsInclude=ClusterMongo.* dump/
