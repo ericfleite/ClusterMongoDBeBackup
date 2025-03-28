@@ -203,8 +203,32 @@ db.cliente.insertOne({codigo:5, nome: "Juliana"});
   Verifique se os dados foram inseridos.
 </p>
 
-```
+```shell
 db.cliente.find()
+```
+
+<p>
+    Evidenciando uma consulta no nó secundário, adicione uma conexão no MongoDB Compass (usei o nó mongo40):
+</p>
+
+```shell
+mongodb://127.0.0.1:27020/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
+```
+
+<p>
+    Abra o terminal do secundário, e usando o banco de dados ClusterMongo faça a consulta:
+</p>
+
+```shell
+use ClusterMongo
+db.cliente.find()
+```
+<p>
+    Evidenciando o primário no secundário com o comando abaixo:
+</p>
+
+```shell
+rs.isMaster().primary
 ```
 
 <p id="nosecundario"></p>
