@@ -15,7 +15,7 @@
     <li><a href="#replica">Iniciando o Replica Set no Docker</a></li>
     <li><a href="#inserir">Inserindo dados no banco de dados no MongoDB Compass</a></li>
     <li><a href="#nosecundario">Derrubando um nó secundário</a></li>
-    <li><a href="#noprimario">Derrubando um nó primário</a></li>
+    <li><a href="#noprimario">Derrubando o nó primário</a></li>
   </ul>
   <li><a href="#">Backup e Restore</a></li>
 </ul>
@@ -304,7 +304,7 @@ docker exec -it mongo20 mongosh --eval "rs.status()"
 </p>
 
 <p -width="100%" align="center">
-    <img src="./imagens/primario.png" alt="primario" width="300px">
+    <img src="./imagens/primario.png" alt="primario" width="200px">
 </p>
 
 <p>
@@ -316,6 +316,9 @@ db.cliente.insertOne({codigo:6, nome: "José"});
 ```
 
 <p>
-    Irá aparecer um erro, devido o nó estar desconectado
+    Irá aparecer um erro, devido ao nó estar desconectado.
 </p>
 
+<p -width="100%" align="center">
+    <img src="./imagens/erroMongo.png" alt="erro" width="500px">
+</p>
