@@ -15,6 +15,7 @@
     <li><a href="#replica">Iniciando o Replica Set no Docker</a></li>
     <li><a href="#inserir">Inserindo dados no banco de dados no MongoDB Compass</a></li>
     <li><a href="#nosecundario">Derrubando um nó secundário</a></li>
+    <li><a href="#noprimario">Derrubando um nó primário</a></li>
   </ul>
   <li><a href="#">Backup e Restore</a></li>
 </ul>
@@ -110,7 +111,7 @@ mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&a
 ```
 
 <p -width="100%" align="center">
-    <img src="./imagens/ConnectingTo.png" alt="Mongo" width="700px">
+    <img src="./imagens/ConnectingTo.png" alt="connectingTo" width="700px">
 </p>
 
 <p>
@@ -120,6 +121,10 @@ mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&a
 ```shell
 db.runCommand ({hello:1})
 ```
+
+<p -width="100%" align="center">
+    <img src="./imagens/hello.png" alt="hello" width="350px">
+</p>
 
 <p>
   Ainda no docker, faça a configuração do replica set dos nós e os ative, inserindo o id de cada um e qual o id do replica set, mostrando qual o membro também, usando o prompt:
@@ -142,6 +147,10 @@ exit
 ```shell
 docker exec -it mongo10 mongosh --eval "rs.status()"
 ```
+
+<p -width="100%" align="center">
+    <img src="./imagens/primario.png" alt="Mongo" width="200px">
+</p>
 
 <p>
   Você pode usar esse comando em outro nó que foi configurado também, como por exemplo o mongo20. E verifique quem é o nó primário.
@@ -219,7 +228,11 @@ docker exec -it mongo10 mongosh --eval "rs.status()"
 ```
 
 <p>
-  Você verificará que o nó caiu.
+  Você verificará que onde deveria estar indicando secundary, está dizendo que o nó não está saudável.
+</p>
+
+<p -width="100%" align="center">
+    <img src="./imagens/nothealthy.png" alt="nothealthy" width="300px">
 </p>
 
 <p>
@@ -247,6 +260,62 @@ docker exec -it mongo10 mongosh --eval "rs.status()"
 ```
 
 <p>
+    Aparecerá como secundário novamente.
+</p>
+
+<p>
   Você verificará que o nó voltou e está ativo como secundário.
+</p>
+
+<p -width="100%" align="center">
+    <img src="./imagens/secundario.png" alt="secundario" width="250px">
+</p>
+
+<p id="noprimario"></p>
+
+### 🔄 Derrubando o nó primário:
+
+<p>
+    No docker, para parar um nó primário (no meu caso o mongo10), digite o seguinte prompt:
+</p>
+
+```shell
+docker stop mongo10
+```
+
+<p>
+    Para verificar, entre fazendo o acesso por outro nó (no meu caso usei o mongo20), usando o seguinte prompt:
+</p>
+
+```shell
+docker exec -it mongo20 mongosh --eval "rs.status()"
+```
+
+<p>
+    Você verificará que o nó não está saudável, onde deveria estar escrito primary.
+</p>
+
+<p -width="100%" align="center">
+    <img src="./imagens/nothealthy.png" alt="nothealthy" width="300px">
+</p>
+
+<p>
+    Encontre o nó primário para poder fazer a conexão posteriormente.
+</p>
+
+<p -width="100%" align="center">
+    <img src="./imagens/primario.png" alt="primario" width="300px">
+</p>
+
+<p>
+    No MongoDB Compass tente inserir um dado. Por exemplo:
+</p>
+
+```shell
+db.cliente.insertOne({codigo:6, nome: "José"});
+```
+
+<p>
+    Irá aparecer um erro, devido o nó estar desconectado
 </p>
 
