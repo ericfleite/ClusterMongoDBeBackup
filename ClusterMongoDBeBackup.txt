@@ -64,6 +64,14 @@ db.cliente.insertOne({codigo:5, nome: "Juliana"});
 Verifique se os dados foram inseridos:
 db.cliente.find()
 
+Consulta no nó secundário:
+Adicione a conexão com o secundário:
+mongodb://127.0.0.1:27020/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
+
+No terminal do secundário:
+use ClusterMongo
+db.cliente.find()
+
 Parando o nó secundário:
 docker stop mongo40
 
