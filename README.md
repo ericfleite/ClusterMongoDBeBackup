@@ -386,4 +386,15 @@ docker exec -it mongo30 bash
 ```shell
 cat /etc/os-release
 ```
+<p>
+    No meu caso é o Ubunto 22.04.
+</p>
+
+<p -width="100%" align="center">
+    <img src="./imagens/SO.png" alt="SO" width="250px">
+</p>
+
+<p>
+    Será necessário instalar o Command Line no conteiner, agora que você vai até a página para o download e selecione o Sistema Operacional correto  e marque como package "deb". E faça o download.
+</p>
 
