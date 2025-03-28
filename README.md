@@ -398,3 +398,109 @@ cat /etc/os-release
     Será necessário instalar o Command Line no conteiner, agora que você vai até a página para o download e selecione o Sistema Operacional correto  e marque como package "deb". E faça o download.
 </p>
 
+🔗[Link do site para download do Command Line](https://www.mongodb.com/try/download/database-tools)
+
+<p -width="100%" align="center">
+    <img src="./imagens/command.png" alt="command" width="400px">
+</p>
+
+<p>
+    No docker, você precisará inserir o arquivo que você baixou dentro do conteiner. E para isso insira o prompt abaixo (lembrando que o caminho do arquivo pode mudar):
+</p>
+
+```shell
+docker cp "C:\CommandLine\mongodb-database-tools-ubuntu2204-x86_64-100.11.0.deb" mongo30:/tmp
+```
+
+<p>
+    Acesse o bash do conteiner usando o comando abaixo (lembrando que estou usando o mongo30):
+</p>
+
+```shell
+docker container exec -u 0 -it mongo30 bash
+```
+
+<p>
+    Como foi adicionado o arquivo dentro da pasta tmp, acesse a pasta tmp:
+</p>
+
+```shell
+cd tmp
+```
+
+<p>
+    Verifique se o arquivo está na pasta.
+</p>
+
+```shell
+ls
+```
+
+<p>
+    Faça a instalação da ferramenta com o prompt abaixo:
+</p>
+
+```shell
+dpkg -i mongodb-database-tools-ubuntu2204-x86_64-100.11.0.deb
+```
+
+<p>
+    Após a instalação da ferramenta, saia da pasta:
+</p>
+
+```shell
+cd ..
+```
+
+<p>
+    Nesse ponto, será feito o backup full dos bancos de dados. Utilize o prompt:
+</p>
+
+```shell
+mongodump
+```
+
+<p>
+    Acesse a pasta dump, onde haverá os arquivos de backup dos bancos de dados.
+</p>
+
+```shell
+cd dump
+```
+
+<p>
+    Verifique se foi criado os arquivos:
+</p>
+
+```shell
+ls
+```
+
+<p>
+    Saia da pasta dump:
+</p>
+
+```shell
+cd ..
+```
+
+<p>
+    Delete o banco de dados que você deseja fazer o teste, no meu caso deletei o banco de dados ClusterMongo. Após deletar volte no docker ainda no bash como root, e digite:
+</p>
+
+```shell
+mongorestore --nsInclude=ClusterMongo.* dump/
+```
+
+<p>
+    Verifique que o banco foi restaurado com sucesso, no MongoDB Compass, usando o banco ClusterMongo, use o find para verificar os dados:
+</p>
+
+```shell
+db.cliente.find()
+```
+
+<p>
+    Você verificará que os dados voltaram.
+</p>
+
