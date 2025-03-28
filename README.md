@@ -109,6 +109,10 @@ docker exec -it mongo10 mongosh
 mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
 ```
 
+<p -width="100%" align="center">
+    <img src="./imagens/ConnectingTo.png" alt="Mongo" width="350px">
+</p>
+
 <p>
   Verifique se o conteiner está executando com o seguinte prompt:
 </p>
