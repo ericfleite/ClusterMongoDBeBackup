@@ -208,7 +208,7 @@ db.cliente.find()
 ```
 
 <p>
-    Evidenciando uma consulta no nó secundário, adicione uma conexão no MongoDB Compass (usei o nó mongo40):
+    Evidenciando uma consulta no nó secundário adicionando uma conexão no MongoDB Compass (usei o nó mongo40):
 </p>
 
 ```shell
