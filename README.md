@@ -110,7 +110,7 @@ mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&a
 ```
 
 <p -width="100%" align="center">
-    <img src="./imagens/ConnectingTo.png" alt="Mongo" width="350px">
+    <img src="./imagens/ConnectingTo.png" alt="Mongo" width="700px">
 </p>
 
 <p>
