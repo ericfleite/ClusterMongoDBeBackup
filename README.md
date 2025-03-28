@@ -17,7 +17,7 @@
     <li><a href="#nosecundario">Derrubando um nó secundário</a></li>
     <li><a href="#noprimario">Derrubando o nó primário</a></li>
   </ul>
-  <li><a href="#">Backup e Restore</a></li>
+  <li><a href="#backup">Backup e Restore</a></li>
 </ul>
 
 <p id="network"></p>
@@ -322,3 +322,68 @@ db.cliente.insertOne({codigo:6, nome: "José"});
 <p -width="100%" align="center">
     <img src="./imagens/erroMongo.png" alt="erro" width="500px">
 </p>
+
+<p>
+    Faça uma nova conexão no MongoDB compass com o novo nó primário, verifique que somente o endereço referente ao nó foi alterado no link de conexão (no meu caso o primário é o mongo30 dessa vez):
+</p>
+
+```shell
+mongodb://127.0.0.1:27019/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.4.2
+```
+
+<p>
+    Faça a leitura e inserção de dados para teste:
+</p>
+
+```shell
+use ClusterMongo
+
+db.cliente.find()
+
+db.cliente.insertOne({codigo:7, nome: "Matheus"});
+```
+
+<p>
+    No docker, volte com o nó anteriormente derrubado, usando o prompt:
+</p>
+
+```shell
+docker run -d --rm -p 27017:27017 --name mongo10 --network mongoCluster mongodb/mongodb-community-server:latest --replSet myReplicaSet --bind_ip localhost,mongo10
+```
+
+<p>
+    Verifique o nó mongo10 voltou como secundário e está funcionando.
+</p>
+
+```shell
+docker exec -it mongo20 mongosh --eval "rs.status()"
+```
+
+<p -width="100%" align="center">
+    <img src="./imagens/secundario.png" alt="secundario" width="250px">
+</p>
+
+<p>
+    Assim foi feito a derrubada de um nó secundário e o primário, e o cluster continuou trabalhando normalmente.
+</p>
+
+<p id="backup"></p>
+
+### 💾 Backup e Restore
+
+<p>
+    Primeiramente é necessário instalar a ferramenta Command Line do MongoDB. E para isso é preciso verificaro o Sistema Operacional do conteiner que será instalado o Command Line. E para isso acesse o docker, no meu caso farei no conteiner mongo30. Execute o comando a seguir para entrar no bash do conteiner:
+</p>
+
+```shell
+docker exec -it mongo30 bash
+```
+
+<p>
+    Execute o comando a seguir para verificar o Sistema Operacional do conteiner:
+</p>
+
+```shell
+cat /etc/os-release
+```
+
